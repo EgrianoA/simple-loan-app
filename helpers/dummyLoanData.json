@@ -1,13 +1,22 @@
-{
-    "loans": [
-        {
-            "name": "ABC1243",
-            "ktp": "ktp",
-            "loan_amount": 1235,
-            "loan_period_month": 2,
-            "loan_purpose": "purpose",
-            "dob": "DD/MM/YYYY",
-            "sex": "male"
-        }
-    ]
-}
+[
+ {
+  "loan_id": "",
+  "name": "ABC1243",
+  "ktp": "ktp",
+  "loan_amount": 1235,
+  "loan_period_month": 2,
+  "loan_purpose": "purpose",
+  "dob": "DD/MM/YYYY",
+  "gender": "male"
+ },
+ {
+  "loan_id": "Loan-123",
+  "name": "ABC1243",
+  "ktp": "ktp",
+  "loan_amount": 1235,
+  "loan_period_month": 2,
+  "loan_purpose": "purpose",
+  "dob": "DD/MM/YYYY",
+  "gender": ""
+ }
+]

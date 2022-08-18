@@ -14,5 +14,7 @@ func loanRoutes(superRoute *gin.RouterGroup) {
 	loanRouter := superRoute.Group("/loan")
 	{
 		loanRouter.POST("/create", controllers.CreateLoan)
+		loanRouter.GET("/findById/:loan_id", controllers.FindLoanById)
+		loanRouter.GET("/findByKTP/:ktp", controllers.FindLoadByKTP)
 	}
 }

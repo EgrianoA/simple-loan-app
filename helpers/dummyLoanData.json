@@ -1,8 +1,8 @@
 [
  {
-  "loan_id": "Loan-180822-7526",
-  "name": "A Aa",
-  "ktp": "3174052508970007",
+  "loan_id": "LOAN-180822-7526",
+  "name": "Egriano Aristianto",
+  "ktp": "3174052508971237",
   "loan_amount": 1000000,
   "loan_period_month": 2,
   "loan_purpose": "vacation",

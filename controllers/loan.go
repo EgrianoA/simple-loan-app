@@ -55,7 +55,7 @@ func CreateLoan(c *gin.Context) {
 	reformatedCurrentTime := currentTime[0:2] + currentTime[3:5] + currentTime[8:10]
 	unixTime := strconv.FormatInt(time.Now().Unix(), 10)
 
-	var loan_id string = "Loan-" + reformatedCurrentTime + "-" + unixTime[len(unixTime)-4:]
+	var loan_id string = "LOAN-" + reformatedCurrentTime + "-" + unixTime[len(unixTime)-4:]
 
 	var loans []LoanObj
 	newLoan := LoanObj{
@@ -147,4 +147,69 @@ func CreateLoan(c *gin.Context) {
 	_ = ioutil.WriteFile("helpers/dummyLoanData.json", file, 0644)
 
 	c.JSON(http.StatusOK, gin.H{"data": newLoan})
+}
+
+func FindLoanById(c *gin.Context) {
+	//Getting the request data
+	requestedLoanId := c.Params.ByName("loan_id")
+
+	//Validating the input
+	var loanIdRegex, _ = regexp.Compile(`^LOAN-[0-9]{6}-[0-9]{4}$`)
+	var loanIdValid = loanIdRegex.MatchString(requestedLoanId)
+	if !loanIdValid {
+		c.JSON(http.StatusBadRequest, gin.H{"Message": "Loan ID is Invalid"})
+		return
+	}
+
+	//Opening the JSON data
+	var loans []LoanObj
+	savedLoanJson, _ := os.Open("helpers/dummyLoanData.json")
+	fmt.Println("The File is opened successfully...")
+	defer savedLoanJson.Close()
+	byteValue, _ := ioutil.ReadAll(savedLoanJson)
+	json.Unmarshal(byteValue, &loans)
+	var loanIdx int = -1
+	for i := range loans {
+		if loans[i].Loan_id == requestedLoanId {
+			loanIdx = i
+		}
+	}
+	if loanIdx < 0 {
+		c.JSON(http.StatusNotFound, gin.H{"Message": "Loan ID is Not Found"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": loans[loanIdx]})
+	}
+}
+
+func FindLoadByKTP(c *gin.Context) {
+	//Getting the request data
+	requestedKTP := c.Params.ByName("ktp")
+
+	//Validating the input
+	var ktpRegex, _ = regexp.Compile(`^[0-9]{16}$`)
+	var ktpFormatValid = ktpRegex.MatchString(requestedKTP)
+	if !ktpFormatValid {
+		c.JSON(http.StatusBadRequest, gin.H{"Message": "The KTP Format is invalid"})
+		return
+	}
+	//Opening the JSON data
+	var loans []LoanObj
+	savedLoanJson, _ := os.Open("helpers/dummyLoanData.json")
+	fmt.Println("The File is opened successfully...")
+	defer savedLoanJson.Close()
+	byteValue, _ := ioutil.ReadAll(savedLoanJson)
+	json.Unmarshal(byteValue, &loans)
+
+	var foundLoanList []LoanObj
+	for i := range loans {
+		if loans[i].KTP == requestedKTP {
+			foundLoanList = append(foundLoanList, loans[i])
+		}
+	}
+	if len(foundLoanList) < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"data": "There's no loan with this KTP"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": foundLoanList})
+	}
+
 }

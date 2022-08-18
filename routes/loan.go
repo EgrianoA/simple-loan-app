@@ -2,7 +2,7 @@ package routes
 
 import (
 	"net/http"
-	"simple-loan-app/controllers"
+	loans "simple-loan-app/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,8 +13,8 @@ func loanRoutes(superRoute *gin.RouterGroup) {
 	})
 	loanRouter := superRoute.Group("/loan")
 	{
-		loanRouter.POST("/create", controllers.CreateLoan)
-		loanRouter.GET("/findById/:loan_id", controllers.FindLoanById)
-		loanRouter.GET("/findByKTP/:ktp", controllers.FindLoadByKTP)
+		loanRouter.POST("/create", loans.CreateLoan)
+		loanRouter.GET("/findById/:loan_id", loans.FindLoanById)
+		loanRouter.GET("/findByKTP/:ktp", loans.FindLoadByKTP)
 	}
 }

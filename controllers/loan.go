@@ -1,4 +1,4 @@
-package controllers
+package loans
 
 import (
 	"encoding/json"

@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,9 +50,16 @@ func CreateLoan(c *gin.Context) {
 	// path, _ := os.Getwd()
 	// fmt.Println(path)
 
+	//Generate Loan_ID
+	currentTime := time.Now().Format("02-01-2006")
+	reformatedCurrentTime := currentTime[0:2] + currentTime[3:5] + currentTime[8:10]
+	unixTime := strconv.FormatInt(time.Now().Unix(), 10)
+
+	var loan_id string = "Loan-" + reformatedCurrentTime + "-" + unixTime[len(unixTime)-4:]
+
 	var loans []LoanObj
 	newLoan := LoanObj{
-		Loan_id:           "Loan-123",
+		Loan_id:           loan_id,
 		Name:              req.Name,
 		KTP:               req.KTP,
 		Loan_amount:       req.Loan_amount,
@@ -97,15 +105,13 @@ func CreateLoan(c *gin.Context) {
 
 	var nikBirthDate = newLoan.KTP[6:12]
 	var birthDate = newLoan.DOB[0:2]
-	var birthMonth = newLoan.DOB[3:5]
-	var birthYear = newLoan.DOB[8:10]
 
 	if newLoan.Gender == "female" {
 		var birthDateInt, _ = strconv.Atoi(birthDate)
 		birthDateInt += 40
 		birthDate = strconv.Itoa(birthDateInt)
 	}
-	var reformatedDOB = birthDate + birthMonth + birthYear
+	var reformatedDOB = birthDate + newLoan.DOB[3:5] + newLoan.DOB[8:10]
 	fmt.Println("reformatedDOB: ", reformatedDOB)
 	if nikBirthDate != reformatedDOB {
 		c.JSON(http.StatusBadRequest, gin.H{"Message": "The DOB and NIK is not match"})

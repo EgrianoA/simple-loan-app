@@ -207,7 +207,7 @@ func FindLoadByKTP(c *gin.Context) {
 		}
 	}
 	if len(foundLoanList) < 1 {
-		c.JSON(http.StatusNotFound, gin.H{"data": "There's no loan with this KTP"})
+		c.JSON(http.StatusNotFound, gin.H{"Message": "There's no loan with this KTP"})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"data": foundLoanList})
 	}

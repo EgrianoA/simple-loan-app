@@ -18,7 +18,15 @@ func setUpRouter() *gin.Engine {
 }
 
 type LoanObjRes struct {
-	data loans.LoanObj `json:"loan_id"`
+	Data loans.LoanObj `json:data`
+}
+
+type LoanArrRes struct {
+	Data []loans.LoanObj `json:data`
+}
+
+type LoanErrRes struct {
+	Message string `json:message`
 }
 
 func TestCreateLoan(t *testing.T) {
@@ -37,7 +45,10 @@ func TestCreateLoan(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loan LoanObjRes
+	json.Unmarshal(w.Body.Bytes(), &loan)
 	assert.Equal(t, http.StatusOK, w.Code)
+	assert.IsType(t, LoanObjRes{}, loan)
 }
 
 func TestCreateLoanInvalidName(t *testing.T) {
@@ -56,7 +67,10 @@ func TestCreateLoanInvalidName(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Name is invalid", loanErr.Message)
 }
 
 func TestCreateLoanInvalidMinName(t *testing.T) {
@@ -75,7 +89,10 @@ func TestCreateLoanInvalidMinName(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Name is invalid. Name should have minimum two words", loanErr.Message)
 }
 
 func TestCreateLoanInvalidGender(t *testing.T) {
@@ -94,7 +111,10 @@ func TestCreateLoanInvalidGender(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Gender is invalid. Only accept these value: male, female", loanErr.Message)
 }
 
 func TestCreateLoanInvalidKTP(t *testing.T) {
@@ -113,7 +133,10 @@ func TestCreateLoanInvalidKTP(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "The KTP Format is invalid", loanErr.Message)
 }
 
 func TestCreateLoanInvalidDOB(t *testing.T) {
@@ -132,7 +155,10 @@ func TestCreateLoanInvalidDOB(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "The DOB is Invalid", loanErr.Message)
 }
 
 func TestCreateLoanDOBAndNIKNotMatch(t *testing.T) {
@@ -151,7 +177,10 @@ func TestCreateLoanDOBAndNIKNotMatch(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "The DOB and NIK is not match", loanErr.Message)
 }
 
 func TestCreateLoanInvalidLoanAmount(t *testing.T) {
@@ -170,7 +199,10 @@ func TestCreateLoanInvalidLoanAmount(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Loan Amount is invalid. Loan Amount should between 1.000.000 and 10.000.000", loanErr.Message)
 }
 
 func TestCreateLoanInvalidLoanPeriod(t *testing.T) {
@@ -189,7 +221,10 @@ func TestCreateLoanInvalidLoanPeriod(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Maximum loan period is 240", loanErr.Message)
 }
 
 func TestCreateLoanInvalidLoanPurpose(t *testing.T) {
@@ -208,7 +243,10 @@ func TestCreateLoanInvalidLoanPurpose(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/api/loan/create", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Loan Purpose is invalid. Only accept these value: vacation, renovation, electronics, wedding, rent, car, investment", loanErr.Message)
 }
 
 func TestFindByLoanId(t *testing.T) {
@@ -217,7 +255,10 @@ func TestFindByLoanId(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/api/loan/findById/LOAN-180822-7526", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loan LoanObjRes
+	json.Unmarshal(w.Body.Bytes(), &loan)
 	assert.Equal(t, http.StatusOK, w.Code)
+	assert.IsType(t, LoanObjRes{}, loan)
 }
 
 func TestInvalidLoanId(t *testing.T) {
@@ -226,7 +267,10 @@ func TestInvalidLoanId(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/api/loan/findById/LOAN-18xyz2-7526", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "Loan ID is Invalid", loanErr.Message)
 }
 
 func TestNotExistLoanId(t *testing.T) {
@@ -235,7 +279,10 @@ func TestNotExistLoanId(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/api/loan/findById/LOAN-180822-0000", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, "Loan ID is Not Found", loanErr.Message)
 }
 
 func TestFindByKTP(t *testing.T) {
@@ -243,8 +290,11 @@ func TestFindByKTP(t *testing.T) {
 	r.GET("/api/loan/findByKTP/:ktp", loans.FindLoadByKTP)
 	req, _ := http.NewRequest("GET", "/api/loan/findByKTP/3174052508971237", nil)
 	w := httptest.NewRecorder()
+	var loan LoanArrRes
+	json.Unmarshal(w.Body.Bytes(), &loan)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
+	assert.GreaterOrEqual(t, 1, len(loan.Data))
 }
 
 func TestInvalidFindKTP(t *testing.T) {
@@ -253,14 +303,20 @@ func TestInvalidFindKTP(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/api/loan/findByKTP/31740abc08971237", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "The KTP Format is invalid", loanErr.Message)
 }
 
 func TestFindNotExistKTP(t *testing.T) {
 	r := setUpRouter()
 	r.GET("/api/loan/findByKTP/:ktp", loans.FindLoadByKTP)
-	req, _ := http.NewRequest("GET", "/api/loan/findByKTP/3174072108971237", nil)
+	req, _ := http.NewRequest("GET", "/api/loan/findByKTP/3174099999971237", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	var loanErr LoanErrRes
+	json.Unmarshal(w.Body.Bytes(), &loanErr)
 	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, "There's no loan with this KTP", loanErr.Message)
 }

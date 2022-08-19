@@ -218,5 +218,15 @@
   "loan_purpose": "vacation",
   "dob": "28/08/1997",
   "gender": "male"
+ },
+ {
+  "loan_id": "LOAN-190822-2362",
+  "name": "Demo User",
+  "ktp": "3174072808971238",
+  "loan_amount": 1500000,
+  "loan_period_month": 6,
+  "loan_purpose": "vacation",
+  "dob": "28/08/1997",
+  "gender": "male"
  }
 ]

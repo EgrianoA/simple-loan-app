@@ -73,33 +73,33 @@ func CreateLoan(c *gin.Context) {
 	var nameRegex, _ = regexp.Compile(`^[a-zA-Z ]{4,}$`)
 	var nameValid = nameRegex.MatchString(newLoan.Name)
 	if !nameValid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Name is invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Name is invalid"})
 		return
 	}
 
 	splittedName := strings.Fields(newLoan.Name)
 	if len(splittedName) < 2 {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Name is invalid. Name should have minimum two words"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Name is invalid. Name should have minimum two words"})
 		return
 	}
 
 	gender_valid := FindFromArrStr(gender_enum[:], newLoan.Gender)
 	if !gender_valid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Gender is invalid. Only accept these value: male, female"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Gender is invalid. Only accept these value: male, female"})
 		return
 	}
 
 	var ktpRegex, _ = regexp.Compile(`^[0-9]{16}$`)
 	var ktpFormatValid = ktpRegex.MatchString(newLoan.KTP)
 	if !ktpFormatValid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "The KTP Format is invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "The KTP Format is invalid"})
 		return
 	}
 
 	var dateRegex, _ = regexp.Compile(`^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$`)
 	var dateFormatValid = dateRegex.MatchString(newLoan.DOB)
 	if !dateFormatValid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "The DOB is Invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "The DOB is Invalid"})
 		return
 	}
 
@@ -114,23 +114,23 @@ func CreateLoan(c *gin.Context) {
 	var reformatedDOB = birthDate + newLoan.DOB[3:5] + newLoan.DOB[8:10]
 	fmt.Println("reformatedDOB: ", reformatedDOB)
 	if nikBirthDate != reformatedDOB {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "The DOB and NIK is not match"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "The DOB and NIK is not match"})
 		return
 	}
 
 	if newLoan.Loan_amount < 1000000 || newLoan.Loan_amount > 10000000 {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Loan Amount is invalid. Loan Amount should between 1.000.000 and 10.000.000"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Loan Amount is invalid. Loan Amount should between 1.000.000 and 10.000.000"})
 		return
 	}
 
 	if newLoan.Loan_period_month > 240 {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Maximum loan period is 240"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Maximum loan period is 240"})
 		return
 	}
 
 	loan_purpose_valid := FindFromArrStr(loan_purpose_enum[:], newLoan.Loan_purpose)
 	if !loan_purpose_valid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Loan Purpose is invalid. Only accept these value: vacation, renovation, electronics, wedding, rent, car, investment"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Loan Purpose is invalid. Only accept these value: vacation, renovation, electronics, wedding, rent, car, investment"})
 		return
 	}
 
@@ -157,7 +157,7 @@ func FindLoanById(c *gin.Context) {
 	var loanIdRegex, _ = regexp.Compile(`^LOAN-[0-9]{6}-[0-9]{4}$`)
 	var loanIdValid = loanIdRegex.MatchString(requestedLoanId)
 	if !loanIdValid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "Loan ID is Invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Loan ID is Invalid"})
 		return
 	}
 
@@ -175,7 +175,7 @@ func FindLoanById(c *gin.Context) {
 		}
 	}
 	if loanIdx < 0 {
-		c.JSON(http.StatusNotFound, gin.H{"Message": "Loan ID is Not Found"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Loan ID is Not Found"})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"data": loans[loanIdx]})
 	}
@@ -189,7 +189,7 @@ func FindLoadByKTP(c *gin.Context) {
 	var ktpRegex, _ = regexp.Compile(`^[0-9]{16}$`)
 	var ktpFormatValid = ktpRegex.MatchString(requestedKTP)
 	if !ktpFormatValid {
-		c.JSON(http.StatusBadRequest, gin.H{"Message": "The KTP Format is invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "The KTP Format is invalid"})
 		return
 	}
 	//Opening the JSON data
@@ -207,7 +207,7 @@ func FindLoadByKTP(c *gin.Context) {
 		}
 	}
 	if len(foundLoanList) < 1 {
-		c.JSON(http.StatusNotFound, gin.H{"Message": "There's no loan with this KTP"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "There's no loan with this KTP"})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"data": foundLoanList})
 	}
